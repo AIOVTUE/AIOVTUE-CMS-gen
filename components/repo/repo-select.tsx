@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDebounce } from "use-debounce";
 import { formatDistanceToNow } from "date-fns";
-import Link from "next/link";
 import { useUser } from "@/contexts/user-context";
 import { getGithubInstallationUrl } from "@/lib/github-app";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -210,20 +209,21 @@ export function RepoSelect({
           ? <ul>
               {searchResults.map((result: any) => (
                 <li key={`${result.owner}/${result.repo}`} className="flex gap-x-2 items-center border border-b-0 last:border-b first:rounded-t-md last:rounded-b-md px-3 py-2 text-sm">
-                  <Link
+                  {/* Native <a>: soft App Router nav into repo shells often blanks until hard refresh. */}
+                  <a
                     className="truncate font-medium hover:underline"
                     href={getRepoOpenHref(result)}
-                  >{result.repo}</Link>
+                  >{result.repo}</a>
                   {result.private && <LockKeyhole className="h-3 w-3 opacity-50"/>}
                   {result.updatedAt &&
                     <div className="text-muted-foreground truncate">{formatDistanceToNow(new Date(result.updatedAt))} ago</div>
                   }
-                  <Link
+                  <a
                     className={cn("ml-auto", buttonVariants({ variant: "outline", size: "xs"}))}
                     href={getRepoOpenHref(result)}
                   >
                     打开
-                  </Link>
+                  </a>
                 </li>
               ))}
             </ul>

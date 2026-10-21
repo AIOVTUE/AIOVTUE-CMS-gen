@@ -11,7 +11,6 @@ import {
 } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useAppRouter } from "@/hooks/use-app-router";
 import { useConfig } from "@/contexts/config-context";
 import { useRepo } from "@/contexts/repo-context";
 import { useUser } from "@/contexts/user-context";
@@ -481,7 +480,6 @@ type NavigationNode = {
 };
 
 function RepoSwitcher() {
-  const router = useAppRouter();
   const { owner, repo, branches = [] } = useRepo();
   const { config } = useConfig();
   const currentBranch = config?.branch ?? "";
@@ -583,7 +581,8 @@ function RepoSwitcher() {
   }, [loadRecentRepos]);
 
   const handleBranchChange = (branch: string) => {
-    router.push(repoHref(owner, repo, branch));
+    // Full load remounts branch layout/providers cleanly (soft push can blank).
+    window.location.assign(repoHref(owner, repo, branch));
   };
 
   return (
@@ -681,16 +680,15 @@ function RepoSwitcher() {
                     asChild
                     key={`${visit.owner}/${visit.repo}/${visit.branch}`}
                   >
-                    <Link
-                      href={repoHref(visit.owner, visit.repo, visit.branch)}
-                    >
+                    {/* Native <a>: soft-nav into another repo shell blanks until refresh. */}
+                    <a href={repoHref(visit.owner, visit.repo, visit.branch)}>
                       <img
                         src={`https://github.com/${visit.owner}.png`}
                         alt={`${visit.owner}'s avatar`}
                         className="size-5 rounded"
                       />
                       <span className="truncate">{visit.repo}</span>
-                    </Link>
+                    </a>
                   </DropdownMenuItem>
                 ))}
               </>

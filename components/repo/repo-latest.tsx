@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { formatDistanceToNow } from "date-fns";
-import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { getVisits } from "@/lib/tracker";
@@ -59,17 +58,18 @@ export function RepoLatest() {
           )}
         >
           <img src={`https://github.com/${visit.owner}.png`} alt={visit.owner} className="h-6 w-6 rounded" />
-          <Link
+          {/* Full document load — soft nav into another repo shell blanks until refresh. */}
+          <a
             className="truncate font-medium hover:underline"
             href={repoHref(visit.owner, visit.repo, visit.branch)}
-          >{visit.repo}</Link>
+          >{visit.repo}</a>
           <div className="text-muted-foreground truncate">{formatDistanceToNow(new Date(visit.timestamp * 1000))} ago</div>
-          <Link
+          <a
             className={cn("ml-auto", buttonVariants({ variant: "outline", size: "xs"}))}
             href={repoHref(visit.owner, visit.repo, visit.branch)}
           >
             Open
-          </Link>
+          </a>
         </li>
       ))}
     </ul>

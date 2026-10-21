@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useAppRouter } from "@/hooks/use-app-router";
 import { useConfig } from "@/contexts/config-context";
 import { useRepo } from "@/contexts/repo-context";
 import { RepoBranches } from "./repo-branches";
@@ -32,7 +31,6 @@ export function RepoDropdown({
 }: {
   onClick?: () => void;
 }) {
-  const router = useAppRouter();
   const { owner, repo, branches, defaultBranch } = useRepo();
   const { config } = useConfig();
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
@@ -65,7 +63,7 @@ export function RepoDropdown({
   }, [branches]);
 
   const handleBranchChange = (branch: string) => {
-    router.push(repoHref(owner, repo, branch));
+    window.location.assign(repoHref(owner, repo, branch));
   };
 
   return (

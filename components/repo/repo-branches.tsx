@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
 import { useRepo } from "@/contexts/repo-context";
 import { useConfig } from "@/contexts/config-context";
 import { Input } from "@/components/ui/input"
@@ -86,7 +85,7 @@ export function RepoBranches() {
       <main className="flex flex-col gap-y-1 overflow-auto max-h-[calc(100vh-9rem)] scrollbar text-sm">
         {filteredBranches && filteredBranches.length > 0
           ? filteredBranches.map(branch => (
-            <Link
+            <a
               key={branch}
               className={cn(
                 branch === config?.branch
@@ -98,7 +97,7 @@ export function RepoBranches() {
             >
               <span className="truncate">{branch}</span>
               {branch === config?.branch && <Check className="h-4 w-4 ml-auto opacity-50" />}
-            </Link>
+            </a>
           ))
           : <div className="text-muted-foreground py-6 text-center">No branches found.</div>
         }
