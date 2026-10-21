@@ -236,7 +236,8 @@ export const isAdminBootstrapped = async (): Promise<boolean> => {
     const { emailLoginSettingsTable } = await import("@/db/schema");
     const row = await db.query.emailLoginSettingsTable.findFirst();
     return Boolean(row?.enabled && row.passwordHash);
-  } catch {
+  } catch (error) {
+    logServerError(error, "app-config admin bootstrap check");
     return false;
   }
 };

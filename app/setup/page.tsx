@@ -3,6 +3,7 @@ import { SetupWizard } from "@/components/setup/setup-wizard";
 import {
   getAppConfigPublic,
   isAdminBootstrapped,
+  isAppSetupComplete,
   resetAppConfigForSetup,
 } from "@/lib/app-config/store";
 import { DocumentTitle } from "@/components/document-title";
@@ -27,16 +28,19 @@ export default async function SetupPage({
 
   let initial = null;
   try {
-    const config = await getAppConfigPublic();
-    // Only treat DB setup_complete as done — ignore LOCAL_DEV_BYPASS_AUTH.
-    if (config.setupComplete) {
-      redirect("/sign-in");
+    // Fully ready → leave setup. Do NOT use setupComplete alone (can loop with
+    // /sign-in when secrets decrypt fail or GitHub App is still missing).
+    if (await isAppSetupComplete()) {
+      const session = await getServerSession();
+      redirect(session?.user ? "/" : "/sign-in");
     }
+
+    const config = await getAppConfigPublic();
     const bootstrapped = await isAdminBootstrapped();
     const session = await getServerSession();
-    if (bootstrapped && !session?.user) {
-      redirect(`/sign-in?redirect=${encodeURIComponent("/setup")}`);
-    }
+    // Intentionally no server redirect to /sign-in when bootstrapped:
+    // that paired with sign-in's !bootstrapped→/setup caused infinite redirects
+    // when the two checks disagreed. Client "去登录" / post-bootstrap assign is enough.
     initial = {
       config: { ...config, setupComplete: false },
       complete: false,

@@ -23,9 +23,14 @@ export default async function Page({
 }) {
   const appComplete = await isAppSetupComplete();
   const bootstrapped = await isAdminBootstrapped();
+  // hasAuthSecret covers "password step done but email_login row lagging / flaky"
+  // so we don't bounce back to /setup and loop with setup's login CTA.
+  const configPublic = await getAppConfigPublic().catch(() => null);
+  const canSignIn =
+    bootstrapped || Boolean(configPublic?.hasAuthSecret && configPublic.adminEmails);
 
-  // No admin yet → first setup step. Bootstrapped but incomplete → allow login.
-  if (!appComplete && !bootstrapped) {
+  // No admin bootstrap yet → first setup step. Partial/full bootstrap → allow login.
+  if (!appComplete && !canSignIn) {
     redirect("/setup");
   }
 
@@ -43,6 +48,10 @@ export default async function Page({
     if (safeRedirect === "/sign-in") {
       return redirect(appComplete ? "/" : "/setup");
     }
+    // Avoid /setup ↔ /sign-in loop when session exists but setup checks disagree.
+    if (!appComplete && safeRedirect === "/setup" && !bootstrapped) {
+      return redirect("/");
+    }
     return redirect(safeRedirect);
   }
 
@@ -59,14 +68,9 @@ export default async function Page({
     console.error("Failed to load login background settings:", error);
   }
 
-  try {
-    const config = await getAppConfigPublic();
-    showGithub = Boolean(
-      config.githubAppClientId && config.hasGithubAppClientSecret,
-    );
-  } catch {
-    showGithub = false;
-  }
+  showGithub = Boolean(
+    configPublic?.githubAppClientId && configPublic.hasGithubAppClientSecret,
+  );
 
   return (
     <>
