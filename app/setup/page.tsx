@@ -7,7 +7,6 @@ import {
   resetAppConfigForSetup,
 } from "@/lib/app-config/store";
 import { DocumentTitle } from "@/components/document-title";
-import { getServerSession } from "@/lib/session-server";
 
 export const dynamic = "force-dynamic";
 
@@ -28,24 +27,18 @@ export default async function SetupPage({
 
   let initial = null;
   try {
-    // Fully ready → leave setup. Do NOT use setupComplete alone (can loop with
-    // /sign-in when secrets decrypt fail or GitHub App is still missing).
+    // Fully ready → leave setup.
     if (await isAppSetupComplete()) {
-      const session = await getServerSession();
-      redirect(session?.user ? "/" : "/sign-in");
+      redirect("/sign-in");
     }
 
     const config = await getAppConfigPublic();
     const bootstrapped = await isAdminBootstrapped();
-    const session = await getServerSession();
-    // Intentionally no server redirect to /sign-in when bootstrapped:
-    // that paired with sign-in's !bootstrapped→/setup caused infinite redirects
-    // when the two checks disagreed. Client "去登录" / post-bootstrap assign is enough.
+    // First-run setup is login-free; session is only needed after setup completes.
     initial = {
       config: { ...config, setupComplete: false },
       complete: false,
       bootstrapped,
-      authenticated: Boolean(session?.user),
     };
   } catch (error) {
     // redirect() throws NEXT_REDIRECT — must not be swallowed.

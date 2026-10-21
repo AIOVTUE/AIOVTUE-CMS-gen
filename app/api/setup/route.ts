@@ -7,7 +7,6 @@ import {
 } from "@/lib/app-config/store";
 import type { AppConfigInput, EmailProvider } from "@/lib/app-config/types";
 import { requireAdminSession } from "@/lib/admin";
-import { getServerSession } from "@/lib/session-server";
 import { logServerError } from "@/lib/security/scrub-secrets";
 
 export const dynamic = "force-dynamic";
@@ -17,14 +16,12 @@ export async function GET() {
     const config = await getAppConfigPublic();
     const complete = await isDbSetupComplete();
     const bootstrapped = await isAdminBootstrapped();
-    const session = await getServerSession();
     return Response.json({
       status: "success",
       data: {
         config: { ...config, setupComplete: complete },
         complete,
         bootstrapped,
-        authenticated: Boolean(session?.user),
       },
     });
   } catch (error: unknown) {
@@ -38,11 +35,12 @@ export async function PUT(request: Request) {
     const complete = await isDbSetupComplete();
     const bootstrapped = await isAdminBootstrapped();
 
-    // After admin bootstrap (or full setup), only admins may update deployment.
-    if (complete || bootstrapped) {
+    // First-time setup (bootstrapped but not complete): no login required.
+    // After setup is marked complete, only admins may change deployment config.
+    if (complete) {
       await requireAdminSession();
-    } else {
-      throw createHttpError("请先创建管理员账号并登录。", 401);
+    } else if (!bootstrapped) {
+      throw createHttpError("请先创建管理员账号。", 401);
     }
 
     const body = await request.json().catch(() => null);

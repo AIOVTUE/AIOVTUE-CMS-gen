@@ -21,16 +21,23 @@ export default async function Page({
 }: {
   searchParams: Promise<{ redirect?: string }>;
 }) {
+  const resolvedSearchParams = await searchParams;
+  const rawRedirect = getSafeRedirect(resolvedSearchParams.redirect);
+  const fromSetup =
+    rawRedirect === "/setup" ||
+    resolvedSearchParams.redirect === "/setup";
+
   const appComplete = await isAppSetupComplete();
   const bootstrapped = await isAdminBootstrapped();
-  // hasAuthSecret covers "password step done but email_login row lagging / flaky"
-  // so we don't bounce back to /setup and loop with setup's login CTA.
+  // hasAuthSecret covers "password step done but email_login row lagging / flaky".
   const configPublic = await getAppConfigPublic().catch(() => null);
   const canSignIn =
-    bootstrapped || Boolean(configPublic?.hasAuthSecret && configPublic.adminEmails);
+    bootstrapped ||
+    Boolean(configPublic?.hasAuthSecret && configPublic.adminEmails);
 
-  // No admin bootstrap yet → first setup step. Partial/full bootstrap → allow login.
-  if (!appComplete && !canSignIn) {
+  // No admin yet → setup. If user arrived with redirect=/setup, do NOT bounce
+  // back (that caused infinite redirects / "去登录无反应").
+  if (!appComplete && !canSignIn && !fromSetup) {
     redirect("/setup");
   }
 
@@ -38,19 +45,13 @@ export default async function Page({
     redirect("/");
   }
 
-  const resolvedSearchParams = await searchParams;
   const session = await getServerSession();
-  const rawRedirect = getSafeRedirect(resolvedSearchParams.redirect);
   const safeRedirect =
     !appComplete && rawRedirect === "/" ? "/setup" : rawRedirect;
 
   if (session?.user) {
     if (safeRedirect === "/sign-in") {
       return redirect(appComplete ? "/" : "/setup");
-    }
-    // Avoid /setup ↔ /sign-in loop when session exists but setup checks disagree.
-    if (!appComplete && safeRedirect === "/setup" && !bootstrapped) {
-      return redirect("/");
     }
     return redirect(safeRedirect);
   }

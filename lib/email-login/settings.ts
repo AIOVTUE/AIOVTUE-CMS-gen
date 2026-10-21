@@ -12,6 +12,7 @@ import {
   assertEmailLoginRateLimit,
   clearEmailLoginRateLimit,
 } from "@/lib/email-login/rate-limit";
+import { ensureEmailLoginSettingsTable } from "@/lib/email-login/ensure-table";
 
 export type { EmailLoginSettingsPublic };
 
@@ -124,6 +125,7 @@ type UpsertInput = {
 export const upsertEmailLoginSettings = async (
   input: UpsertInput,
 ): Promise<EmailLoginSettingsPublic> => {
+  await ensureEmailLoginSettingsTable();
   await ensureDbUser(input.user);
   const existing = await db.query.emailLoginSettingsTable.findFirst({
     where: eq(emailLoginSettingsTable.userId, input.user.id),
@@ -242,6 +244,8 @@ export const signInWithEmailPassword = async (input: {
       status: 401,
     });
   }
+
+  await ensureEmailLoginSettingsTable();
 
   const rateKey = `${input.ipAddress || "unknown"}:${await hashEmail(email)}`;
   assertEmailLoginRateLimit(rateKey);

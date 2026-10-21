@@ -23,7 +23,6 @@ type SetupPayload = {
   config: AppConfigPublic;
   complete: boolean;
   bootstrapped?: boolean;
-  authenticated?: boolean;
 };
 
 type FormState = {
@@ -75,9 +74,6 @@ export function SetupWizard({
   const [bootstrapped, setBootstrapped] = useState(
     initial?.bootstrapped ?? false,
   );
-  const [authenticated, setAuthenticated] = useState(
-    initial?.authenticated ?? false,
-  );
   const [publicConfig, setPublicConfig] = useState<AppConfigPublic | null>(
     initial?.config ?? null,
   );
@@ -97,7 +93,6 @@ export function SetupWizard({
       );
       setComplete(payload.data.complete);
       setBootstrapped(Boolean(payload.data.bootstrapped));
-      setAuthenticated(Boolean(payload.data.authenticated));
       setPublicConfig(payload.data.config);
       setForm(formFromConfig(payload.data.config));
       if (mode === "setup" && payload.data.config.setupComplete) {
@@ -128,22 +123,30 @@ export function SetupWizard({
     event.preventDefault();
     setBootstrapping(true);
     try {
+      const origin = form.baseUrl || window.location.origin;
       const response = await fetch("/api/setup/bootstrap", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: adminEmail.trim(),
           password: adminPassword,
-          baseUrl: form.baseUrl || window.location.origin,
+          baseUrl: origin,
         }),
       });
       await requireApiSuccess(response, "创建管理员失败");
-      toast.success("管理员账号已创建，请登录后继续初始化。");
-      // Hard navigation — soft router.replace + refresh can leave /setup stuck.
-      window.location.assign(
-        `/sign-in?redirect=${encodeURIComponent("/setup")}`,
+      const email = adminEmail.trim().toLowerCase();
+      setBootstrapped(true);
+      setForm((prev) => ({
+        ...prev,
+        baseUrl: prev.baseUrl || origin,
+        adminEmails: email,
+      }));
+      setPublicConfig((prev) =>
+        prev
+          ? { ...prev, adminEmails: email, baseUrl: prev.baseUrl || origin }
+          : prev,
       );
-      return;
+      toast.success("管理员已创建，请继续配置站点与 GitHub App。");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "创建失败");
     } finally {
@@ -170,10 +173,9 @@ export function SetupWizard({
       );
       setComplete(true);
       setPublicConfig(payload.data.config);
-      toast.success(mode === "setup" ? "初始化完成。" : "部署配置已保存。");
+      toast.success(mode === "setup" ? "初始化完成，请登录。" : "部署配置已保存。");
       if (mode === "setup") {
-        router.replace("/");
-        router.refresh();
+        window.location.assign("/sign-in");
       }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "保存失败");
@@ -193,11 +195,10 @@ export function SetupWizard({
 
   const siteRoot = (form.baseUrl || "{站点地址}").replace(/\/$/, "");
   const showAdminStep = mode === "setup" && !bootstrapped && !complete;
-  const needLogin =
-    mode === "setup" && bootstrapped && !authenticated && !complete;
+  // Entire first-run setup is login-free; login only after setup completes.
   const showDeploySteps =
     mode === "settings" ||
-    (mode === "setup" && bootstrapped && authenticated && !complete) ||
+    (mode === "setup" && bootstrapped && !complete) ||
     (mode === "setup" && complete);
 
   if (showAdminStep) {
@@ -209,8 +210,7 @@ export function SetupWizard({
         <div className="space-y-2">
           <h1 className="text-2xl font-semibold tracking-tight">首次初始化</h1>
           <p className="text-muted-foreground text-sm">
-            第 1 步：创建管理员邮箱与密码。保存后需登录，才能继续配置站点与
-            GitHub App。
+            第 1 步：创建管理员邮箱与密码（供初始化完成后登录使用）。保存后即可继续配置，全程无需登录。
           </p>
         </div>
 
@@ -218,7 +218,7 @@ export function SetupWizard({
           <CardHeader>
             <CardTitle>邮箱登录</CardTitle>
             <CardDescription>
-              此账号将作为站点管理员，并用于后续登录与初始化。
+              此账号将作为站点管理员，初始化完成后用它登录。
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -259,44 +259,11 @@ export function SetupWizard({
                 保存中…
               </>
             ) : (
-              "保存并去登录"
+              "保存并继续"
             )}
           </Button>
         </div>
       </form>
-    );
-  }
-
-  if (needLogin) {
-    return (
-      <div className="mx-auto max-w-2xl space-y-6 p-4 md:p-8">
-        <div className="space-y-2">
-          <h1 className="text-2xl font-semibold tracking-tight">首次初始化</h1>
-          <p className="text-muted-foreground text-sm">
-            管理员账号已创建。请先登录，再继续配置站点与 GitHub App。
-          </p>
-        </div>
-        <Card>
-          <CardHeader>
-            <CardTitle>需要登录</CardTitle>
-            <CardDescription>
-              使用刚才设置的邮箱与密码登录后返回本页。
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button
-              type="button"
-              onClick={() =>
-                window.location.assign(
-                  `/sign-in?redirect=${encodeURIComponent("/setup")}`,
-                )
-              }
-            >
-              去登录
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
     );
   }
 

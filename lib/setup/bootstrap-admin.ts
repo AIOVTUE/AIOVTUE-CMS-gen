@@ -54,7 +54,7 @@ async function bootstrapAdminAccountUnlocked(input: {
   }
   if (await isAdminBootstrapped()) {
     throw Object.assign(
-      new Error("管理员账号已创建，请登录后继续初始化。"),
+      new Error("管理员账号已创建，请继续完成初始化配置。"),
       { status: 409 },
     );
   }
@@ -67,14 +67,6 @@ async function bootstrapAdminAccountUnlocked(input: {
     baseUrl,
     adminEmails: email,
   });
-
-  // Re-check after config write — another instance may have raced.
-  if (await isAdminBootstrapped()) {
-    throw Object.assign(
-      new Error("管理员账号已创建，请登录后继续初始化。"),
-      { status: 409 },
-    );
-  }
 
   const user = await ensureDbUser({
     id: randomBytes(16).toString("hex"),

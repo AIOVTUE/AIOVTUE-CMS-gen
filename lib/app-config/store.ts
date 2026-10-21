@@ -233,6 +233,10 @@ export const isAdminBootstrapped = async (): Promise<boolean> => {
     await ensureAppConfigTable();
     const config = await getAppConfig();
     if (!config.authSecret || !config.adminEmails.trim()) return false;
+    const { ensureEmailLoginSettingsTable } = await import(
+      "@/lib/email-login/ensure-table"
+    );
+    await ensureEmailLoginSettingsTable();
     const { emailLoginSettingsTable } = await import("@/db/schema");
     const row = await db.query.emailLoginSettingsTable.findFirst();
     return Boolean(row?.enabled && row.passwordHash);
