@@ -10,7 +10,11 @@ import dynamic from "next/dynamic";
 import { createPortal } from "react-dom";
 import CodeMirror, { EditorView } from "@uiw/react-codemirror";
 import { githubDark, githubLight } from "@uiw/codemirror-theme-github";
-import { LanguageDescription, StreamLanguage } from "@codemirror/language";
+import {
+  LanguageDescription,
+  LanguageSupport,
+  StreamLanguage,
+} from "@codemirror/language";
 import { javascript } from "@codemirror/lang-javascript";
 import { json } from "@codemirror/lang-json";
 import { html } from "@codemirror/lang-html";
@@ -41,7 +45,8 @@ const codeLanguages = [
     name: "YAML",
     alias: ["yaml", "yml"],
     extensions: ["yaml", "yml"],
-    load: async () => StreamLanguage.define(yaml),
+    load: async () =>
+      new LanguageSupport(StreamLanguage.define(yaml)),
   }),
 ];
 import { useTheme } from "next-themes";
