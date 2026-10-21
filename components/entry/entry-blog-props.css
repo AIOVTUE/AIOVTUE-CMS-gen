@@ -1,0 +1,539 @@
+/* Blog editor shell — aligned with hugo-cfBlog .post-editor */
+
+.entry-blog-editor {
+  display: grid;
+  gap: 0.75rem;
+  width: 100%;
+  min-width: 0;
+}
+
+/* ─── Editor head actions (取消 / 保存) ─── */
+.entry-blog-editor-head__btn {
+  appearance: none !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0.25rem 0.5rem !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: var(--muted-foreground) !important;
+  font-size: 0.8125rem !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important;
+}
+
+.entry-blog-editor-head__btn:hover {
+  background: transparent !important;
+  color: var(--foreground) !important;
+}
+
+.entry-blog-editor-head__btn--save {
+  color: var(--primary) !important;
+  font-weight: 600 !important;
+}
+
+.entry-blog-editor-head__btn--save:hover:not(:disabled) {
+  color: color-mix(in srgb, var(--primary) 78%, #000) !important;
+  background: color-mix(in srgb, var(--primary) 10%, transparent) !important;
+}
+
+.entry-blog-editor-head__btn--save:disabled {
+  opacity: 0.45;
+}
+
+.entry-blog-editor-head__more {
+  height: 1.75rem !important;
+  width: 1.75rem !important;
+  color: var(--muted-foreground) !important;
+}
+
+/* ─── Props fold (.admin-fold) ─── */
+.entry-blog-props {
+  border: 0;
+  background: transparent;
+}
+
+.entry-blog-props__summary {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  width: max-content;
+  max-width: 100%;
+  min-height: 0;
+  padding: 0.125rem 0;
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--muted-foreground);
+  touch-action: manipulation;
+}
+
+.entry-blog-props__summary::-webkit-details-marker {
+  display: none;
+}
+
+.entry-blog-props__summary::marker {
+  content: "";
+}
+
+.entry-blog-props__chevron {
+  flex-shrink: 0;
+  width: 0.75rem;
+  height: 0.75rem;
+  color: var(--muted-foreground);
+  transition: transform 0.15s ease;
+}
+
+.entry-blog-props[open] > .entry-blog-props__summary .entry-blog-props__chevron {
+  transform: rotate(180deg);
+}
+
+.entry-blog-props__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  margin-top: 0.375rem;
+  padding-top: 0.625rem;
+  border-top: 1px solid var(--border);
+}
+
+/* Article template: raw frontmatter YAML between --- delimiters */
+.entry-blog-props__raw {
+  min-width: 0;
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  overflow: hidden;
+  background: var(--background);
+}
+
+.entry-blog-props__raw .cm-editor {
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+.entry-blog-props__raw .cm-scroller {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.entry-blog-props__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.625rem;
+  align-items: start;
+}
+
+@media (min-width: 640px) {
+  .entry-blog-props__row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+/* 置顶 / 公式渲染 / 画板模式 — one left-aligned row */
+.entry-blog-props__row--switches {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+}
+
+.entry-blog-props__row--switches > .entry-blog-props__cell {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 0;
+}
+
+.entry-blog-props__row--switches .entry-blog-props__field[data-slot="form-item"] {
+  grid-template-columns: max-content max-content;
+  width: max-content;
+}
+
+.entry-blog-props__cell {
+  min-width: 0;
+}
+
+/* cfBlog .admin-field: label column sized to text (no wrap) */
+.entry-blog-props__field[data-slot="form-item"] {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 0.375rem 0.5rem;
+  align-items: center;
+  min-width: 0;
+  font-size: 0.8125rem;
+  color: var(--foreground);
+}
+
+.entry-blog-props__field[data-slot="form-item"][data-blog-align="start"] {
+  align-items: start;
+}
+
+.entry-blog-props__field .entry-blog-props__label-wrap {
+  display: contents;
+}
+
+.entry-blog-props__field [data-slot="form-label"],
+.entry-blog-props__label {
+  grid-column: 1;
+  box-sizing: border-box;
+  display: block !important;
+  width: max-content;
+  min-width: 2em;
+  max-width: none;
+  margin: 0;
+  padding-top: 0;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--foreground);
+  white-space: nowrap;
+}
+
+.entry-blog-props__field[data-blog-align="start"] [data-slot="form-label"] {
+  padding-top: 0.35rem;
+}
+
+/* Labels that wrap in a 2em column (AI摘要 / 目录开始 / 目录结束) */
+.entry-blog-props__field[data-slot="form-item"][data-blog-label="wrap"] {
+  grid-template-columns: 2em minmax(0, 1fr);
+}
+
+.entry-blog-props__field[data-blog-label="wrap"] [data-slot="form-label"] {
+  display: block !important;
+  width: 2em;
+  min-width: 2em;
+  max-width: 2em;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-all;
+  line-height: 1.25;
+}
+
+/* Higher specificity than wrap label's display:block */
+.entry-blog-props__field[data-blog-label="wrap"]
+  [data-slot="form-label"].entry-blog-props__label--ai,
+.entry-blog-props__ai-meta [data-slot="form-label"].entry-blog-props__label--ai {
+  display: flex !important;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0;
+  width: 2em;
+  min-width: 2em;
+  max-width: 2em;
+  white-space: normal;
+  overflow-wrap: normal;
+  word-break: normal;
+  line-height: 1.25;
+  font-weight: 500;
+}
+
+.entry-blog-props__label--ai-en {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.entry-blog-props__label--ai-en i {
+  font-style: normal;
+}
+
+.entry-blog-props__label--ai-zh {
+  display: block;
+  width: 100%;
+  text-align: justify;
+  text-align-last: justify;
+}
+
+/* AI summary: action on top row; label | textarea below */
+.entry-blog-props__field[data-slot="form-item"][data-blog-field="ai"] {
+  grid-template-columns: 2em minmax(0, 1fr);
+  align-items: start;
+}
+
+.entry-blog-props__ai-action-row {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  min-width: 0;
+}
+
+.entry-blog-props__ai-action-row .entry-blog-props__ai-action {
+  margin: 0;
+  height: auto;
+  min-height: 0;
+  font-size: 0.75rem;
+  line-height: 1.2;
+}
+
+.entry-blog-props__ai-meta {
+  grid-column: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 2em;
+}
+
+.entry-blog-props__field[data-blog-field="ai"] [data-slot="form-control"] {
+  grid-column: 2;
+}
+
+.entry-blog-props__field[data-blog-field="ai"] [data-slot="form-message"] {
+  grid-column: 2;
+}
+
+.entry-blog-props__field [data-slot="form-control"] {
+  grid-column: 2;
+  min-width: 0;
+  color: var(--foreground);
+}
+
+.entry-blog-props__field [data-slot="form-description"],
+.entry-blog-props__field [data-slot="form-message"] {
+  grid-column: 2;
+}
+
+.entry-blog-props__field .entry-blog-props__badge {
+  display: none;
+}
+
+.entry-blog-props__field input,
+.entry-blog-props__field textarea,
+.entry-blog-props__slug-input input {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.25rem;
+  padding: 0.5rem 0.625rem;
+  font-size: 0.8125rem;
+  border-radius: 0.5rem;
+  color: var(--foreground);
+}
+
+.entry-blog-props__field .entry-blog-date-trigger {
+  width: 100%;
+  min-height: 2.25rem;
+  border-radius: 0.5rem;
+  color: var(--foreground);
+}
+
+.entry-blog-props__field .entry-blog-date-trigger[data-empty="true"] {
+  color: color-mix(in oklch, var(--muted-foreground) 55%, transparent);
+}
+
+.entry-blog-props__field input::placeholder,
+.entry-blog-props__field textarea::placeholder,
+.entry-blog-props__slug-input input::placeholder {
+  color: color-mix(in oklch, var(--muted-foreground) 55%, transparent);
+  opacity: 1;
+}
+
+.entry-blog-props__field textarea {
+  min-height: 4.5rem;
+}
+
+.entry-blog-props__cell [data-slot="form-item"] {
+  gap: 0.375rem 0.5rem;
+}
+
+.entry-blog-props__cell:has([data-blog-inline="list"]) [data-slot="form-label"] {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+/* cfBlog AI field keeps top-aligned control; label matches other props */
+.entry-blog-props__field[data-blog-align="start"] textarea {
+  min-height: 3.5rem;
+}
+
+.entry-blog-props-more {
+  margin-top: 0.125rem;
+}
+
+.entry-blog-props-more__summary {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  width: max-content;
+  padding: 0.125rem 0;
+  list-style: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+}
+
+.entry-blog-props-more__summary::-webkit-details-marker {
+  display: none;
+}
+
+.entry-blog-props-more__summary::marker {
+  content: "";
+}
+
+.entry-blog-props-more[open] > .entry-blog-props-more__summary .entry-blog-props__chevron {
+  transform: rotate(180deg);
+}
+
+.entry-blog-props-more__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  margin-top: 0.5rem;
+}
+
+.entry-blog-props__slug-input {
+  width: 100%;
+}
+
+/* ─── Body (.content-block) ─── */
+.entry-blog-body {
+  box-sizing: border-box;
+  display: grid;
+  gap: 0.375rem;
+  min-width: 0;
+  max-width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow-x: clip;
+}
+
+.entry-blog-body__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.entry-blog-body__title {
+  flex-shrink: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--muted-foreground);
+}
+
+.entry-blog-body__toggle-slot {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.entry-blog-body__content {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.entry-blog-body [data-slot="form-item"] {
+  gap: 0;
+  min-width: 0;
+}
+
+.entry-blog-body [data-slot="form-control"] {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.entry-blog-body textarea {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 7.5rem;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--background);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  field-sizing: content;
+  resize: none;
+  overflow: hidden;
+}
+
+/* cfBlog single toggle: 预览 / 编辑 */
+.entry-blog-body__toggle {
+  appearance: none;
+  margin: 0;
+  padding: 0.25rem 0.5rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.2;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.entry-blog-body__toggle:hover,
+.entry-blog-body__toggle[data-active="true"] {
+  color: var(--primary);
+  background: transparent;
+}
+
+.entry-blog-body__toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ─── Footer checks (.editor-footer) ─── */
+.entry-blog-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.625rem;
+  flex-wrap: wrap;
+  padding-top: 0.625rem;
+  border-top: 1px solid var(--border);
+}
+
+.entry-blog-footer__checks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+}
+
+.entry-blog-footer__check [data-slot="form-item"],
+.entry-blog-footer__check-item[data-slot="form-item"] {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.entry-blog-footer__check [data-slot="form-label"],
+.entry-blog-footer__check-item [data-slot="form-label"] {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  cursor: pointer;
+}
+
+.entry-blog-footer__check [data-slot="form-description"],
+.entry-blog-footer__check [data-slot="form-message"],
+.entry-blog-footer__check-item [data-slot="form-description"],
+.entry-blog-footer__check-item [data-slot="form-message"] {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .entry-blog-body textarea {
+    min-height: 12rem;
+    font-size: 1rem;
+  }
+}

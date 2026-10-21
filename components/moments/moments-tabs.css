@@ -1,0 +1,21 @@
+.moments-tab-list {
+  background: color-mix(in oklch, var(--background) 42%, transparent);
+  border-color: color-mix(in oklch, var(--border) 55%, transparent);
+  backdrop-filter: blur(10px) saturate(1.15);
+  -webkit-backdrop-filter: blur(10px) saturate(1.15);
+}
+
+.dark .moments-tab-list {
+  background: color-mix(in oklch, var(--background) 35%, transparent);
+  border-color: color-mix(in oklch, white 12%, transparent);
+}
+
+.moments-tab-list__active {
+  background: color-mix(in oklch, var(--background) 72%, transparent);
+  box-shadow: 0 1px 2px color-mix(in oklch, black 8%, transparent);
+}
+
+.dark .moments-tab-list__active {
+  background: color-mix(in oklch, white 14%, transparent);
+  box-shadow: none;
+}

@@ -1,0 +1,6 @@
+Webanalysi
+.pagescms
+docs
+*.md
+!README.md
+scripts/reset-app-config.mjs

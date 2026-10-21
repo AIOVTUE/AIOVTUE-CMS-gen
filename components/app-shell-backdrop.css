@@ -1,0 +1,130 @@
+/* Shared fixed page background (settings, home, repo, admin, …). */
+.app-shell-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background-color: var(--background);
+}
+
+.app-shell-backdrop__image {
+  position: absolute;
+  inset: -40px;
+  background-image: var(
+    --app-shell-bg-mobile,
+    url("/images/home/bg-mobile.png")
+  );
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  filter: blur(3px);
+  transform: scale(1.08);
+  will-change: filter;
+}
+
+.app-shell-backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: color-mix(in oklch, var(--background) 18%, transparent);
+}
+
+@media (min-width: 768px) {
+  .app-shell-backdrop__image {
+    background-image: var(
+      --app-shell-bg-desktop,
+      url("/images/home/bg-desktop.png")
+    );
+    background-position: center;
+    filter: blur(3px);
+  }
+}
+
+.dark .app-shell-backdrop__image {
+  filter: blur(3px) brightness(0.78) saturate(0.95) contrast(1.05);
+}
+
+.dark .app-shell-backdrop::after {
+  background: color-mix(in oklch, var(--background) 22%, transparent);
+}
+
+/* Soft glass cards on every app/repo page. */
+.main-root-shell [data-slot="card"],
+.repo-shell [data-slot="card"] {
+  background: color-mix(
+    in oklch,
+    color-mix(in oklch, var(--background) 80%, black) 58%,
+    transparent
+  ) !important;
+  border-color: color-mix(in oklch, var(--border) 55%, transparent) !important;
+  box-shadow:
+    0 8px 24px color-mix(in oklch, black 6%, transparent),
+    inset 0 1px 0 color-mix(in oklch, var(--foreground) 5%, transparent);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+}
+
+.dark .main-root-shell [data-slot="card"],
+.dark .repo-shell [data-slot="card"] {
+  background: color-mix(in oklch, var(--background) 45%, transparent) !important;
+  border-color: color-mix(in oklch, white 12%, transparent) !important;
+  box-shadow:
+    0 8px 24px color-mix(in oklch, black 22%, transparent),
+    inset 0 1px 0 color-mix(in oklch, white 8%, transparent);
+}
+
+/* Solid surfaces when glass preference is off (html.glass-off). */
+.glass-off .app-shell-backdrop__image,
+.glass-off .app-shell-backdrop::after {
+  display: none !important;
+}
+
+.glass-off .main-root-shell [data-slot="card"],
+.glass-off .repo-shell [data-slot="card"] {
+  background: var(--card) !important;
+  border-color: var(--border) !important;
+  box-shadow: 0 1px 2px color-mix(in oklch, black 6%, transparent);
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.glass-off .main-root-shell__header,
+.glass-off .main-root-shell__main {
+  background: var(--background) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+
+.glass-off .repo-shell [data-slot="sidebar-inner"],
+.glass-off .repo-shell [data-slot="sidebar"] {
+  background: var(--sidebar) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+
+.glass-off .repo-shell [data-slot="sidebar-inset"] {
+  background: var(--background) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+
+.glass-off .repo-shell .repo-shell-header {
+  border-color: var(--border) !important;
+}
+
+.glass-off .moments-tab-list {
+  background: var(--muted) !important;
+  border-color: var(--border) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.glass-off .moments-tab-list__active {
+  background: var(--background) !important;
+  box-shadow: 0 1px 2px color-mix(in oklch, black 8%, transparent);
+}

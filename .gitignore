@@ -1,0 +1,91 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production / build caches
+/build
+/dist
+.turbo
+.cache
+
+# misc / OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+
+# IDE / local tooling
+.vscode/
+.vscode
+.idea/
+.idea
+.docs
+.codex
+.cursor/
+.cursor
+
+# secrets & keys
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+credentials.json
+**/service-account*.json
+**/google-credentials*.json
+
+# local CMS workspace store (mount paths, personal)
+.pagescms/
+.pagescms
+
+# personal / sibling local site clones (never ship)
+/hugo-blog-aiovtue/
+/hugo-blog-aiovtue
+/hugo-cfBlog/
+/hugo-cfBlog
+/Webanalysi/
+/Webanalysi
+
+# accidental API dumps / scratch
+/body.json
+/body2.json
+body*.json
+*.bak
+*.tmp
+_tmp_*
+*.local.json
+dump*.json
+
+# debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# env files (keep only the example)
+.env
+.env.*
+!.env.local.example
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# Database / local sqlite
+local.db
+*.sqlite
+*.sqlite3

@@ -1,0 +1,104 @@
+.repo-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.repo-page-header--start {
+  align-items: flex-start;
+}
+
+.repo-page-header__main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.repo-page-header__title {
+  display: block;
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--foreground);
+}
+
+/* Header breadcrumbs: links and current page share the same size. */
+.repo-page-header__breadcrumb {
+  font-size: 0.9375rem !important;
+  font-weight: 500;
+  line-height: 1.3 !important;
+  color: var(--muted-foreground);
+}
+
+.repo-page-header__breadcrumb .repo-page-header__crumb,
+.repo-page-header__breadcrumb [data-slot="breadcrumb-link"],
+.repo-page-header__breadcrumb [data-slot="breadcrumb-page"] {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: inherit !important;
+  font-weight: inherit;
+  line-height: inherit !important;
+}
+
+.repo-page-header__crumb {
+  cursor: pointer;
+}
+
+.repo-page-header__crumb--current,
+.repo-page-header__breadcrumb [data-slot="breadcrumb-page"] {
+  cursor: default;
+  font-weight: 700 !important;
+  color: var(--foreground) !important;
+}
+
+.repo-page-header__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+  gap: 0.35rem;
+  flex: 0 0 auto;
+  margin-left: auto;
+  min-width: 0;
+}
+
+/* Shared header text actions (取消 / 保存) — matches entry blog editor head. */
+.repo-page-header__btn {
+  appearance: none !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0.25rem 0.5rem !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: var(--muted-foreground) !important;
+  font-size: 0.8125rem !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important;
+}
+
+.repo-page-header__btn:hover {
+  background: transparent !important;
+  color: var(--foreground) !important;
+}
+
+.repo-page-header__btn--save {
+  color: var(--primary) !important;
+  font-weight: 600 !important;
+}
+
+.repo-page-header__btn--save:hover:not(:disabled) {
+  color: color-mix(in srgb, var(--primary) 78%, #000) !important;
+  background: color-mix(in srgb, var(--primary) 10%, transparent) !important;
+}
+
+.repo-page-header__btn--save:disabled {
+  opacity: 0.45;
+}

@@ -1,0 +1,29 @@
+# Pages CMS — base schema (no default content pages).
+# After selecting a project path, configure page templates in「内容与侧栏」.
+
+# Media root is empty until the user picks a folder on first open.
+media:
+  - name: images
+    label: 图片资源
+    input: ""
+    output: /
+    extensions: [jpg, jpeg, png, gif, webp, svg, mp4, webm]
+
+content: []
+
+menus:
+  sidebar:
+    sections:
+      content: { enabled: true, order: 0, label: 内容 }
+      site: { enabled: true, order: 1, label: 站点设置 }
+      media: { enabled: true, order: 2, label: 图片资源 }
+      publish: { enabled: true, order: 3, label: 提交 }
+      actions: { enabled: true, order: 4, label: 操作 }
+      admin: { enabled: true, order: 5, label: 管理 }
+    items: {}
+  header:
+    items: {}
+
+settings:
+  config: true
+  cache: false
