@@ -63,7 +63,7 @@ npm install
 npm run db:migrate
 ```
 
-本地 `npm run build` 后的 `postbuild` 会执行迁移。Vercel 默认跳过（加快部署）；首次上线或改过 schema 时，在项目环境变量中设置 `RUN_DB_MIGRATE=1`，或在构建前手动执行 `npm run db:migrate`。
+`npm run build` 后的 `postbuild` 会执行 `db:migrate`（需要能连上 `DATABASE_URL`）。若迁移改由单独 CI 步骤完成，可设 `SKIP_DB_MIGRATE=1` 跳过。未迁移时初始化创建管理员会失败（`user` 表不存在或结构过旧）。
 
 缓存异常时可清空：
 

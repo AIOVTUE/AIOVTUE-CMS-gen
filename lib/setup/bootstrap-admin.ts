@@ -76,9 +76,8 @@ async function bootstrapAdminAccountUnlocked(input: {
     );
   }
 
-  const userId = randomBytes(16).toString("hex");
-  await ensureDbUser({
-    id: userId,
+  const user = await ensureDbUser({
+    id: randomBytes(16).toString("hex"),
     email,
     name: email.split("@")[0] || email,
     emailVerified: true,
@@ -86,9 +85,9 @@ async function bootstrapAdminAccountUnlocked(input: {
 
   await upsertEmailLoginSettings({
     user: {
-      id: userId,
-      email,
-      name: email.split("@")[0] || email,
+      id: user.id,
+      email: user.email,
+      name: user.name,
       emailVerified: true,
     },
     enabled: true,
