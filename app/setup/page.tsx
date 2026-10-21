@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import { redirect, unstable_rethrow } from "next/navigation";
 import { SetupWizard } from "@/components/setup/setup-wizard";
 import {
   getAppConfigPublic,
@@ -43,7 +43,9 @@ export default async function SetupPage({
       bootstrapped,
       authenticated: Boolean(session?.user),
     };
-  } catch {
+  } catch (error) {
+    // redirect() throws NEXT_REDIRECT — must not be swallowed.
+    unstable_rethrow(error);
     initial = null;
   }
 

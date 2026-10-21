@@ -10,13 +10,40 @@ import dynamic from "next/dynamic";
 import { createPortal } from "react-dom";
 import CodeMirror, { EditorView } from "@uiw/react-codemirror";
 import { githubDark, githubLight } from "@uiw/codemirror-theme-github";
-import { StreamLanguage } from "@codemirror/language";
-import { languages } from "@codemirror/language-data";
+import { LanguageDescription, StreamLanguage } from "@codemirror/language";
 import { javascript } from "@codemirror/lang-javascript";
 import { json } from "@codemirror/lang-json";
 import { html } from "@codemirror/lang-html";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { yaml } from "@codemirror/legacy-modes/mode/yaml";
+
+/** Curated fenced-code langs for MD — avoids pulling @codemirror/language-data (~20 pkgs). */
+const codeLanguages = [
+  LanguageDescription.of({
+    name: "JavaScript",
+    alias: ["js", "javascript", "jsx", "ts", "tsx", "typescript"],
+    extensions: ["js", "jsx", "ts", "tsx", "mjs", "cjs"],
+    load: async () => javascript({ jsx: true }),
+  }),
+  LanguageDescription.of({
+    name: "JSON",
+    alias: ["json"],
+    extensions: ["json"],
+    load: async () => json(),
+  }),
+  LanguageDescription.of({
+    name: "HTML",
+    alias: ["html", "htm"],
+    extensions: ["html", "htm"],
+    load: async () => html(),
+  }),
+  LanguageDescription.of({
+    name: "YAML",
+    alias: ["yaml", "yml"],
+    extensions: ["yaml", "yml"],
+    load: async () => StreamLanguage.define(yaml),
+  }),
+];
 import { useTheme } from "next-themes";
 import { linter } from "@codemirror/lint";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -67,7 +94,7 @@ const EditComponent = forwardRef((props: any, ref: any) => {
         break;
       case "mdx":
         exts.push(
-          markdown({ base: markdownLanguage, codeLanguages: languages }),
+          markdown({ base: markdownLanguage, codeLanguages }),
         );
         break;
       case "javascript":
@@ -87,7 +114,7 @@ const EditComponent = forwardRef((props: any, ref: any) => {
         break;
       default:
         exts.push(
-          markdown({ base: markdownLanguage, codeLanguages: languages }),
+          markdown({ base: markdownLanguage, codeLanguages }),
         );
         break;
     }

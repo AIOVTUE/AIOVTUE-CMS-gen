@@ -8,7 +8,8 @@ const nextConfig = {
       "@dnd-kit/utilities",
       "@dnd-kit/modifiers",
       "date-fns",
-      "recharts",
+      "radix-ui",
+      "@tiptap/react",
     ],
   },
   // Next 16 defaults to Turbopack; empty config acknowledges webpack below for --webpack.

@@ -139,10 +139,11 @@ export function SetupWizard({
       });
       await requireApiSuccess(response, "创建管理员失败");
       toast.success("管理员账号已创建，请登录后继续初始化。");
-      router.replace(
+      // Hard navigation — soft router.replace + refresh can leave /setup stuck.
+      window.location.assign(
         `/sign-in?redirect=${encodeURIComponent("/setup")}`,
       );
-      router.refresh();
+      return;
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "创建失败");
     } finally {
@@ -286,7 +287,7 @@ export function SetupWizard({
             <Button
               type="button"
               onClick={() =>
-                router.push(
+                window.location.assign(
                   `/sign-in?redirect=${encodeURIComponent("/setup")}`,
                 )
               }
