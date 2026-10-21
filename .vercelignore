@@ -1,6 +1,7 @@
-Webanalysi
+# 仅排除部署不需要的内容；勿用宽泛关键字，以免误伤 app/api 路由
 .pagescms
 docs
 *.md
 !README.md
 scripts/reset-app-config.mjs
+scripts/reset-local-data.mjs
