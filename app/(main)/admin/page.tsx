@@ -52,6 +52,8 @@ import {
 } from "@/components/ui/pagination";
 import { getInitialsFromName } from "@/lib/utils/avatar";
 
+export const dynamic = "force-dynamic";
+
 const formatDateTime = (value: Date | string | null | undefined) => {
   if (!value) return "-";
   const date = value instanceof Date ? value : new Date(value);

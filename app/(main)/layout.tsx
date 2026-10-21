@@ -10,6 +10,9 @@ import { isGithubAuthError } from "@/lib/github-auth";
 import { hasAdminAccessAsync } from "@/lib/admin";
 import { isAppSetupComplete } from "@/lib/app-config/store";
 
+/** Auth/DB-backed shell — never statically prerender (build has no session/secrets). */
+export const dynamic = "force-dynamic";
+
 async function AccountsBridge({ user }: { user: User }) {
   let accounts: Awaited<ReturnType<typeof getAccounts>> = [];
   try {
