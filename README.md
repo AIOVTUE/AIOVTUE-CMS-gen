@@ -30,7 +30,7 @@
 ![](https://aiovtue.yybb.us/cms/4.webp)
 
 ### 快速开始
-本文说明如何将 **AIOVTUE-CMS-gen**（通用版，仓库 [AIOVTUE-CMS-gen](https://github.com/AIOVTUE/AIOVTUE-CMS-gen)）部署到本地或服务器。定制版见 [部署-定制版](./deploy)
+本文说明如何将 **AIOVTUE-CMS-gen**（通用版，仓库 [AIOVTUE-CMS-gen](https://github.com/AIOVTUE/AIOVTUE-CMS-gen)）部署到本地或服务器。定制版见 [部署-定制版](https://aiovtue.yybb.us/cms/deploy)
 
 #### 系统要求
 - **Node.js** 20+（建议 LTS）
