@@ -19,7 +19,9 @@
   <a href="###使用教程">使用教程</a> 
 </p>
 <p align="center">⭐ 如果 AIOVTUE-CMS-GEN 对你有帮助，欢迎<a href="https://github.com/AIOVTUE/AIOVTUE-CMS-gen">点个 Star</a>。</p>
+
 ---
+
 ### 简介
 *AIOVTUE-CMS-gen* 是基于开源项目[Pages CMS](https://pagescms.org/) 深度定制魔改的个人博客后台管理项目，主要部署在vercel平台，简化了部署流程和使用体验，深度定制界面ui，项目包含深度定制版和普适版，本项目为普适版，通过自定义文件路径和模版进行配置，理论上支持任何github仓库实现任何架构的后台管理
 ### 界面预览
