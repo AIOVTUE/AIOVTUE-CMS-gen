@@ -15,8 +15,8 @@
 <p align="center">
   <a href="https://daily.yybb.us">前往博客</a> ·
   <a href="https://aiovtue.yybb.us/cms/overview">文档</a> ·
-  <a href="###快速开始">快速开始</a> ·
-  <a href="###使用教程">使用教程</a> 
+  <a href="#快速开始">快速开始</a> ·
+  <a href="#使用教程">使用教程</a> 
 </p>
 <p align="center">⭐ 如果 AIOVTUE-CMS-GEN 对你有帮助，欢迎<a href="https://github.com/AIOVTUE/AIOVTUE-CMS-gen">点个 Star</a>。</p>
 
